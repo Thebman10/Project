@@ -5,6 +5,7 @@ from PIL import Image
 import os
 import base64
 import pickle
+from sklearn.linear_model import LinearRegression  # Importing from scikit-learn
 
 # Check if Java is installed, if not install it
 def check_java_installation():
@@ -35,9 +36,7 @@ def filedownload(df):
 def build_model(input_data):
     # Reads in saved regression model
     try:
-        # Load the model from file
-        with open('acetylcholinesterase_model.pkl', 'rb') as file:
-            load_model = pickle.load(file)
+        load_model = pickle.load(open('acetylcholinesterase_model.pkl', 'rb'))
     except FileNotFoundError:
         st.error("Model file 'acetylcholinesterase_model.pkl' not found!")
         return
@@ -86,7 +85,6 @@ if st.sidebar.button('Predict'):
             st.write(load_data)
 
             with st.spinner("Calculating descriptors..."):
-                check_java_installation()  # Check if Java is installed before calculation
                 desc_calc()
 
             # Read in calculated descriptors and display the dataframe
