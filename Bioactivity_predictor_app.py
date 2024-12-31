@@ -35,7 +35,9 @@ def filedownload(df):
 def build_model(input_data):
     # Reads in saved regression model
     try:
-        load_model = pickle.load(open('acetylcholinesterase_model.pkl', 'rb'))
+        # Load the model from file
+        with open('acetylcholinesterase_model.pkl', 'rb') as file:
+            load_model = pickle.load(file)
     except FileNotFoundError:
         st.error("Model file 'acetylcholinesterase_model.pkl' not found!")
         return
@@ -84,6 +86,7 @@ if st.sidebar.button('Predict'):
             st.write(load_data)
 
             with st.spinner("Calculating descriptors..."):
+                check_java_installation()  # Check if Java is installed before calculation
                 desc_calc()
 
             # Read in calculated descriptors and display the dataframe
@@ -106,4 +109,3 @@ if st.sidebar.button('Predict'):
             st.error("Please upload a valid text file with .txt extension.")
     else:
         st.info('Upload input data in the sidebar to start!')
-
