@@ -5,7 +5,6 @@ from PIL import Image
 import os
 import base64
 import pickle
-from sklearn.linear_model import LinearRegression  # Importing from scikit-learn
 
 # Check if Java is installed, if not install it
 def check_java_installation():
@@ -107,3 +106,4 @@ if st.sidebar.button('Predict'):
             st.error("Please upload a valid text file with .txt extension.")
     else:
         st.info('Upload input data in the sidebar to start!')
+
