@@ -21,15 +21,27 @@ def desc_calc():
     # Get the absolute path to the PaDEL-Descriptor folder
     padel_dir = os.path.abspath('./PaDEL -Descriptor')
     
+    # Ensure paths with spaces are properly handled by adding quotes
+    jar_file = os.path.join(padel_dir, 'PaDEL-Descriptor.jar')
+    descriptor_file = os.path.join(padel_dir, 'PubchemFingerprinter.xml')
+    
+    # Ensure the jar file and descriptor file exist at the specified paths
+    if not os.path.exists(jar_file):
+        st.error(f"Unable to find PaDEL-Descriptor.jar at {jar_file}")
+        return
+    if not os.path.exists(descriptor_file):
+        st.error(f"Unable to find PubchemFingerprinter.xml at {descriptor_file}")
+        return
+
     # Build the command with absolute paths and quotes around paths containing spaces
-    bashCommand = f"java -Xms2G -Xmx2G -Djava.awt.headless=true -jar '{os.path.join(padel_dir, 'PaDEL-Descriptor.jar')}' -removesalt -standardizenitro -fingerprints -descriptortypes '{os.path.join(padel_dir, 'PubchemFingerprinter.xml')}' -dir ./ -file descriptors_output.csv"
+    bashCommand = f"java -Xms2G -Xmx2G -Djava.awt.headless=true -jar \"{jar_file}\" -removesalt -standardizenitro -fingerprints -descriptortypes \"{descriptor_file}\" -dir ./ -file descriptors_output.csv"
     
     # Run the process
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
 
     if error:
-        print("Error executing PaDEL descriptor calculation:", error)
+        st.error(f"Error executing PaDEL descriptor calculation: {error.decode()}")
     
     # Clean up temporary files
     os.remove('molecule.smi')  # Assuming you are deleting this temporary file
