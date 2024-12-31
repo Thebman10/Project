@@ -18,11 +18,21 @@ def check_java_installation():
 
 # Molecular descriptor calculator
 def desc_calc():
-    # Performs the descriptor calculation
-    bashCommand = "java -Xms2G -Xmx2G -Djava.awt.headless=true -jar ./PaDEL -Descriptor/PaDEL\ -Descriptor.jar -removesalt -standardizenitro -fingerprints -descriptortypes ./PaDEL\ -Descriptor/PubchemFingerprinter.xml -dir ./ -file descriptors_output.csv"
+    # Get the absolute path to the PaDEL-Descriptor folder
+    padel_dir = os.path.abspath('./PaDEL -Descriptor')
+    
+    # Build the command with absolute paths and quotes around paths containing spaces
+    bashCommand = f"java -Xms2G -Xmx2G -Djava.awt.headless=true -jar '{os.path.join(padel_dir, 'PaDEL-Descriptor.jar')}' -removesalt -standardizenitro -fingerprints -descriptortypes '{os.path.join(padel_dir, 'PubchemFingerprinter.xml')}' -dir ./ -file descriptors_output.csv"
+    
+    # Run the process
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    os.remove('molecule.smi')  # Clean up temporary file
+
+    if error:
+        print("Error executing PaDEL descriptor calculation:", error)
+    
+    # Clean up temporary files
+    os.remove('molecule.smi')  # Assuming you are deleting this temporary file
 
 # File download
 def filedownload(df):
@@ -106,4 +116,3 @@ if st.sidebar.button('Predict'):
             st.error("Please upload a valid text file with .txt extension.")
     else:
         st.info('Upload input data in the sidebar to start!')
-
