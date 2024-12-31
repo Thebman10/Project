@@ -35,7 +35,7 @@ def filedownload(df):
 def build_model(input_data):
     # Reads in saved regression model
     try:
-        load_model = pickle.load(open('acetylcholinesterase_model.pkl', 'rb'))
+        load_model = open('acetylcholinesterase_model.pkl', 'rb')
     except FileNotFoundError:
         st.error("Model file 'acetylcholinesterase_model.pkl' not found!")
         return
