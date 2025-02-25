@@ -18,33 +18,11 @@ def check_java_installation():
 
 # Molecular descriptor calculator
 def desc_calc():
-    # Get the absolute path to the PaDEL-Descriptor folder
-    padel_dir = os.path.abspath('./PaDEL -Descriptor')
-    
-    # Ensure paths with spaces are properly handled by adding quotes
-    jar_file = os.path.join(padel_dir, 'PaDEL-Descriptor.jar')
-    descriptor_file = os.path.join(padel_dir, 'PubchemFingerprinter.xml')
-    
-    # Ensure the jar file and descriptor file exist at the specified paths
-    if not os.path.exists(jar_file):
-        st.error(f"Unable to find PaDEL-Descriptor.jar at {jar_file}")
-        return
-    if not os.path.exists(descriptor_file):
-        st.error(f"Unable to find PubchemFingerprinter.xml at {descriptor_file}")
-        return
-
-    # Build the command with absolute paths and quotes around paths containing spaces
-    bashCommand = f"java -Xms2G -Xmx2G -Djava.awt.headless=true -jar \"{jar_file}\" -removesalt -standardizenitro -fingerprints -descriptortypes \"{descriptor_file}\" -dir ./ -file descriptors_output.csv"
-    
-    # Run the process
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Performs the descriptor calculation
+    bashCommand = "java -Xms2G -Xmx2G -Djava.awt.headless=true -jar ./PaDEL -Descriptor/PaDEL\ -Descriptor.jar -removesalt -standardizenitro -fingerprints -descriptortypes ./PaDEL\ -Descriptor/PubchemFingerprinter.xml -dir ./ -file descriptors_output.csv"
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-
-    if error:
-        st.error(f"Error executing PaDEL descriptor calculation: {error.decode()}")
-    
-    # Clean up temporary files
-    os.remove('molecule.smi')  # Assuming you are deleting this temporary file
+    os.remove('molecule.smi')  # Clean up temporary file
 
 # File download
 def filedownload(df):
@@ -84,7 +62,7 @@ st.markdown("""
 This app allows you to predict the bioactivity towards inhibiting the `Acetylcholinesterase` enzyme. `Acetylcholinesterase` is a drug target for Alzheimer's disease.
 
 **Credits**
-- App built in `Python` + `Streamlit` by Baasim Sohail and inspired by [Chanin Nantasenamat](https://medium.com/@chanin.nantasenamat) (aka [Data Professor](http://youtube.com/dataprofessor))
+- App built in `Python` + `Streamlit` by [Chanin Nantasenamat](https://medium.com/@chanin.nantasenamat) (aka [Data Professor](http://youtube.com/dataprofessor))
 - Descriptor calculated using [PaDEL-Descriptor](http://www.yapcwsoft.com/dd/padeldescriptor/) [[Read the Paper]](https://doi.org/10.1002/jcc.21707).
 ---
 """)
@@ -128,3 +106,4 @@ if st.sidebar.button('Predict'):
             st.error("Please upload a valid text file with .txt extension.")
     else:
         st.info('Upload input data in the sidebar to start!')
+
